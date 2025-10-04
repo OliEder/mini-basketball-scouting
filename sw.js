@@ -9,8 +9,8 @@ const CACHE_URLS = [
   APP_PREFIX + '/style.css',
   APP_PREFIX + '/app.js',
   APP_PREFIX + '/manifest.json',
-  APP_PREFIX + '/icons/icon-192x192.png',
-  APP_PREFIX + '/icons/icon-512x512.png'
+  APP_PREFIX + '/icon/web-app-manifest-192x192.png',
+  APP_PREFIX + '/icon/web-app-manifest--512x512.png'
 ];
 
 // Service Worker Installation
