@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Scouting App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏀 Basketball Scouting</h1>
+            <p>Bewerte das gegnerische Team</p>
+        </header>
+
+        <!-- Main Overview Screen -->
+        <div id="overview-screen" class="screen active">
+            <div class="screen-header">
+                <h2>Bewertete Spieler</h2>
+                <button class="btn btn--primary btn--lg" id="add-player-btn">
+                    ➕ Spieler hinzufügen
+                </button>
+            </div>
+            
+            <div id="players-list" class="players-list">
+                <div class="empty-state">
+                    <p>Noch keine Spieler bewertet</p>
+                    <p class="empty-state-sub">Fügen Sie den ersten Spieler hinzu</p>
+                </div>
+            </div>
+
+            <div class="summary-section">
+                <button class="btn btn--secondary btn--full-width" id="show-summary-btn">
+                    📊 Zusammenfassung anzeigen
+                </button>
+            </div>
+        </div>
+
+        <!-- Add/Edit Player Screen -->
+        <div id="player-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn btn--outline back-btn" id="back-to-overview">← Zurück</button>
+                <h2 id="player-screen-title">Spieler bewerten</h2>
+            </div>
+
+            <div class="jersey-input-section">
+                <label class="form-label" for="jersey-number">Trikotnummer</label>
+                <input type="number" id="jersey-number" class="form-control form-control--large" 
+                       placeholder="z.B. 23" min="0" max="99">
+            </div>
+
+            <div class="rating-categories">
+                <!-- Categories will be populated by JavaScript -->
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn--primary btn--lg btn--full-width" id="save-player">
+                    💾 Bewertung speichern
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Screen -->
+        <div id="summary-screen" class="screen">
+            <div class="screen-header">
+                <button class="btn btn--outline back-btn" id="back-from-summary">← Zurück</button>
+                <h2>Zusammenfassung</h2>
+            </div>
+
+            <div id="summary-content" class="summary-content">
+                <!-- Summary will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
