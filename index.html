@@ -2,46 +2,142 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Basketball Scouting App - U10 Bezirksliga</title>
-    <link rel="stylesheet" href="style.css">
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="/mini-basketball-scouting/manifest.json">
-
-    <!-- Mobile Optimierung -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="B-Scout">
 
     <!-- Theme Colors -->
     <meta name="theme-color" content="#1f2937">
     <meta name="msapplication-navbutton-color" content="#1f2937">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- Icons fuer verschiedene Plattformen -->
-    <link rel="icon" type="image/png" href="/icon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/icon/favicon.svg" />
-    <link rel="shortcut icon" href="/icon/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="B-Scout" />
-    <link rel="manifest" href="/icon/site.webmanifest" />
+    <!-- Mobile App Capabilities -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="B-Scout">
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="/mini-basketball-scouting/icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/mini-basketball-scouting/icon/favicon-96x96.png">
+    <link rel="icon" href="/mini-basketball-scouting/icon/favicon.ico">
+
     <!-- SEO -->
     <meta name="description" content="Basketball Scouting App fuer U10 Minibasketball - Bewerte gegnerische Spieler offline">
     <meta name="keywords" content="Basketball, Scouting, U10, Minibasketball, Offline, PWA">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/mini-basketball-scouting/style.css">
+
+    <!-- PWA Styles -->
+    <style>
+        /* PWA Install Button */
+        .pwa-install-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .pwa-install-button:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .pwa-install-button.show {
+            display: block;
+        }
+
+        /* Offline Indicator */
+        .offline::after {
+            content: "OFFLINE";
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #f59e0b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        /* Update Banner */
+        .update-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #2563eb;
+            color: white;
+            padding: 12px 16px;
+            text-align: center;
+            z-index: 1001;
+            display: none;
+        }
+
+        .update-banner.show {
+            display: block;
+        }
+
+        .update-button {
+            background: white;
+            color: #2563eb;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        /* Loading indicator */
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Safe areas for iOS */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Update Banner -->
+    <div id="updateBanner" class="update-banner">
+        🔄 Neue Version verfügbar!
+        <button id="updateButton" class="update-button">Aktualisieren</button>
+    </div>
+
     <!-- App Container -->
     <div id="app" class="app-container">
-        
         <!-- Game Selection Screen -->
         <div id="gameSelectionScreen" class="screen active">
             <div class="container">
                 <header class="app-header">
-                    <h1>Basketball Scouting</h1>
+                    <h1>🏀 Basketball Scouting</h1>
                     <p class="subtitle">U10 mixed Bezirksliga (Oberpfalz)</p>
                 </header>
-                
+
                 <div class="card">
                     <div class="card__header">
                         <h2>Spiel auswählen</h2>
@@ -53,7 +149,7 @@
                                 <option value="">Spiel auswählen...</option>
                             </select>
                         </div>
-                        
+
                         <div class="team-selection">
                             <h3>Welches Team sind wir?</h3>
                             <div class="team-options">
@@ -67,319 +163,375 @@
                                 </label>
                             </div>
                         </div>
-                        
-                        <div id="selectedGameInfo" class="selected-game-info hidden">
+
+                        <div class="game-info" id="selectedGameInfo" style="display: none;">
                             <h3>Ausgewähltes Spiel:</h3>
                             <div class="game-details">
-                                <div class="detail-row">
-                                    <strong>Datum & Zeit:</strong> <span id="gameDateTime"></span>
-                                </div>
-                                <div class="detail-row">
-                                    <strong>Spielhalle:</strong> <span id="gameVenue"></span>
-                                </div>
-                                <div class="detail-row">
-                                    <strong>Unser Team:</strong> <span id="ourTeamName"></span>
-                                </div>
-                                <div class="detail-row opponent-info">
-                                    <strong>Zu scoutender Gegner:</strong> <span id="opponentTeamName"></span>
-                                </div>
+                                <p><strong>Datum & Zeit:</strong> <span id="gameDateTime"></span></p>
+                                <p><strong>Spielhalle:</strong> <span id="gameVenue"></span></p>
+                                <p><strong>Unser Team:</strong> <span id="ourTeam"></span></p>
+                                <p><strong>Zu scoutender Gegner:</strong> <span id="opponentTeam"></span></p>
                             </div>
                         </div>
-                        
-                        <button id="startScoutingBtn" class="btn btn--primary btn--full-width" disabled>
-                            Scouting starten
-                        </button>
-                        
-                        <button id="manualGameBtn" class="btn btn--outline btn--full-width">
-                            Spiel manuell eingeben
-                        </button>
+
+                        <div class="form-actions">
+                            <button id="startScoutingBtn" class="btn btn--primary btn--large" disabled>
+                                🚀 Scouting starten
+                            </button>
+                            <button id="manualGameBtn" class="btn btn--outline">
+                                ✏️ Spiel manuell eingeben
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Player Overview Screen -->
         <div id="playerOverviewScreen" class="screen">
             <div class="container">
-                <div class="breadcrumb">
+                <nav class="breadcrumb">
                     <span class="breadcrumb-item">Spiel</span>
                     <span class="breadcrumb-separator">></span>
                     <span class="breadcrumb-item active">Spieler-Übersicht</span>
-                </div>
-                
+                </nav>
+
                 <header class="screen-header">
-                    <h1 id="currentGameTitle">Spieler-Übersicht</h1>
-                    <p id="currentOpponent" class="opponent-name"></p>
+                    <h2>Bewertete Spieler</h2>
+                    <button class="btn btn--primary" id="addPlayerBtn">
+                        ➕ Spieler hinzufügen
+                    </button>
                 </header>
-                
-                <div class="action-bar">
-                    <button id="addPlayerBtn" class="btn btn--primary">+ Spieler hinzufügen</button>
-                    <div class="menu-buttons">
-                        <button id="exportBtn" class="btn btn--outline">Export</button>
-                        <button id="historyBtn" class="btn btn--outline">Historie</button>
+
+                <div id="playersList" class="players-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">🏀</div>
+                        <h3>Noch keine Spieler bewertet</h3>
+                        <p>Fügen Sie den ersten Spieler hinzu, um mit dem Scouting zu beginnen</p>
                     </div>
                 </div>
-                
-                <div id="playersContainer" class="players-container">
-                    <div id="emptyState" class="empty-state">
-                        <p>Noch keine Spieler bewertet</p>
-                        <p class="empty-subtitle">Fügen Sie den ersten Spieler hinzu, um mit dem Scouting zu beginnen</p>
-                    </div>
+
+                <div class="screen-actions">
+                    <button class="btn btn--outline" id="backToGameSelection">
+                        ← Spiel wechseln
+                    </button>
+                    <button class="btn btn--secondary" id="exportDataBtn">
+                        📊 Export
+                    </button>
                 </div>
             </div>
         </div>
-        
+
         <!-- Player Rating Screen -->
         <div id="playerRatingScreen" class="screen">
             <div class="container">
-                <div class="breadcrumb">
-                    <span class="breadcrumb-item clickable" data-screen="playerOverviewScreen">Übersicht</span>
+                <nav class="breadcrumb">
+                    <span class="breadcrumb-item">Übersicht</span>
                     <span class="breadcrumb-separator">></span>
                     <span class="breadcrumb-item active">Spieler bewerten</span>
-                </div>
-                
+                </nav>
+
                 <header class="screen-header">
-                    <h1 id="playerRatingTitle">Spieler bewerten</h1>
+                    <h2 id="playerRatingTitle">Spieler bewerten</h2>
                 </header>
-                
-                <div class="player-form">
-                    <div class="form-group">
-                        <label for="playerNumber" class="form-label">Trikotnummer:</label>
-                        <input type="number" id="playerNumber" class="form-control" min="1" max="99">
-                    </div>
-                    
-                    <!-- Size Category (Info only) -->
-                    <div class="rating-category">
-                        <h3>Körpergröße <span class="category-note">(nur Info)</span></h3>
-                        <div class="rating-buttons" data-category="groesse">
-                            <button class="rating-btn size-1" data-value="1">klein</button>
-                            <button class="rating-btn size-2" data-value="2">normal</button>
-                            <button class="rating-btn size-3" data-value="3">groß</button>
+
+                <div class="card">
+                    <div class="card__body">
+                        <div class="form-group">
+                            <label for="jerseyNumber" class="form-label">Trikotnummer:</label>
+                            <input type="number" id="jerseyNumber" class="form-control form-control--large" 
+                                   placeholder="z.B. 23" min="0" max="99">
                         </div>
-                    </div>
-                    
-                    <!-- Offensive Abilities -->
-                    <div class="category-section">
-                        <h2>Offensive Fähigkeiten</h2>
-                        
-                        <div class="rating-category">
-                            <h3>Wurfqualität</h3>
-                            <div class="rating-buttons" data-category="wurfqualitaet">
-                                <button class="rating-btn level-1" data-value="1">wirft nur aus der Not</button>
-                                <button class="rating-btn level-2" data-value="2">kommt manchmal zum Korb</button>
-                                <button class="rating-btn level-3" data-value="3">Dreier fallen oft</button>
-                            </div>
+
+                        <!-- Rating Categories -->
+                        <div id="ratingCategories" class="rating-categories">
+                            <!-- Categories will be populated by JavaScript -->
                         </div>
-                        
-                        <div class="rating-category">
-                            <h3>Wie oft wirft er?</h3>
-                            <div class="rating-buttons" data-category="wurfhaeufigkeit">
-                                <button class="rating-btn level-1" data-value="1">selten</button>
-                                <button class="rating-btn level-2" data-value="2">immer wieder</button>
-                                <button class="rating-btn level-3" data-value="3">oft</button>
-                            </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn--outline" id="cancelRating">
+                                ← Abbrechen
+                            </button>
+                            <button class="btn btn--primary btn--large" id="savePlayerRating">
+                                💾 Spieler speichern
+                            </button>
                         </div>
-                        
-                        <div class="rating-category">
-                            <h3>Schnelligkeit</h3>
-                            <div class="rating-buttons" data-category="schnelligkeit">
-                                <button class="rating-btn level-1" data-value="1">eher lahm</button>
-                                <button class="rating-btn level-2" data-value="2">normales Tempo</button>
-                                <button class="rating-btn level-3" data-value="3">schnell</button>
-                            </div>
-                        </div>
-                        
-                        <div class="rating-category">
-                            <h3>Ballbehandlung</h3>
-                            <div class="rating-buttons" data-category="ballbehandlung">
-                                <button class="rating-btn level-1" data-value="1">verliert oft den Ball</button>
-                                <button class="rating-btn level-2" data-value="2">solides Dribbling</button>
-                                <button class="rating-btn level-3" data-value="3">sehr sicher am Ball</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Passing -->
-                    <div class="category-section">
-                        <h2>Passspiel</h2>
-                        
-                        <div class="rating-category">
-                            <h3>Passqualität</h3>
-                            <div class="rating-buttons" data-category="passqualitaet">
-                                <button class="rating-btn level-1" data-value="1">passt selten/ungenau</button>
-                                <button class="rating-btn level-2" data-value="2">passt meistens okay</button>
-                                <button class="rating-btn level-3" data-value="3">fast immer präzise</button>
-                            </div>
-                        </div>
-                        
-                        <div class="rating-category">
-                            <h3>Ballbesitz</h3>
-                            <div class="rating-buttons" data-category="ballbesitz">
-                                <button class="rating-btn level-1" data-value="1">selten</button>
-                                <button class="rating-btn level-2" data-value="2">manchmal</button>
-                                <button class="rating-btn level-3" data-value="3">sehr oft</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Defense -->
-                    <div class="category-section">
-                        <h2>Defensive Fähigkeiten</h2>
-                        
-                        <div class="rating-category">
-                            <h3>Verteidigung</h3>
-                            <div class="rating-buttons" data-category="verteidigung">
-                                <button class="rating-btn level-1" data-value="1">leicht zu umspielen</button>
-                                <button class="rating-btn level-2" data-value="2">steht ganz gut</button>
-                                <button class="rating-btn level-3" data-value="3">klaut oft den Ball</button>
-                            </div>
-                        </div>
-                        
-                        <div class="rating-category">
-                            <h3>Rebounding</h3>
-                            <div class="rating-buttons" data-category="rebounding">
-                                <button class="rating-btn level-1" data-value="1">kämpft selten um Ball</button>
-                                <button class="rating-btn level-2" data-value="2">holt manchmal Rebounds</button>
-                                <button class="rating-btn level-3" data-value="3">schnappt sich oft den Ball</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Overall Impression -->
-                    <div class="category-section">
-                        <h2>Gesamteindruck</h2>
-                        
-                        <div class="rating-category">
-                            <h3>Aktivität</h3>
-                            <div class="rating-buttons" data-category="aktivitaet">
-                                <button class="rating-btn level-1" data-value="1">steht oft rum</button>
-                                <button class="rating-btn level-2" data-value="2">normal aktiv</button>
-                                <button class="rating-btn level-3" data-value="3">immer in Bewegung</button>
-                            </div>
-                        </div>
-                        
-                        <div class="rating-category">
-                            <h3>Gefährlichkeit</h3>
-                            <div class="rating-buttons" data-category="gefahr">
-                                <button class="rating-btn level-1" data-value="1">kaum Gefahr</button>
-                                <button class="rating-btn level-2" data-value="2">sollten wir im Auge behalten</button>
-                                <button class="rating-btn level-3" data-value="3">sehr gefährlich</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button id="savePlayerBtn" class="btn btn--primary btn--full-width">Spieler speichern</button>
-                        <button id="cancelRatingBtn" class="btn btn--outline btn--full-width">Abbrechen</button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- Export Screen -->
         <div id="exportScreen" class="screen">
             <div class="container">
-                <div class="breadcrumb">
-                    <span class="breadcrumb-item clickable" data-screen="playerOverviewScreen">Übersicht</span>
+                <nav class="breadcrumb">
+                    <span class="breadcrumb-item">Übersicht</span>
                     <span class="breadcrumb-separator">></span>
                     <span class="breadcrumb-item active">Export</span>
-                </div>
-                
+                </nav>
+
                 <header class="screen-header">
-                    <h1>Daten Export</h1>
+                    <h2>Daten exportieren</h2>
                 </header>
-                
+
                 <div class="export-options">
                     <div class="card">
                         <div class="card__header">
                             <h3>Aktuelles Spiel</h3>
                         </div>
                         <div class="card__body">
-                            <p id="currentGameExportInfo">Export der aktuellen Scouting-Daten</p>
-                            <div class="export-buttons">
-                                <button id="exportCurrentJSON" class="btn btn--primary">JSON Download</button>
-                                <button id="exportCurrentCSV" class="btn btn--secondary">CSV Download</button>
+                            <p>Export der aktuellen Scouting-Daten</p>
+                            <div class="button-group">
+                                <button class="btn btn--secondary" id="exportCurrentJSON">
+                                    📄 JSON Export
+                                </button>
+                                <button class="btn btn--secondary" id="exportCurrentCSV">
+                                    📊 CSV Export
+                                </button>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="card">
                         <div class="card__header">
                             <h3>Alle Spiele</h3>
                         </div>
                         <div class="card__body">
                             <p>Export aller gespeicherten Scouting-Daten</p>
-                            <div class="export-buttons">
-                                <button id="exportAllJSON" class="btn btn--primary">Alle JSON</button>
-                                <button id="exportAllCSV" class="btn btn--secondary">Alle CSV</button>
+                            <div class="button-group">
+                                <button class="btn btn--secondary" id="exportAllJSON">
+                                    📄 Vollständiger JSON Export
+                                </button>
+                                <button class="btn btn--secondary" id="exportAllCSV">
+                                    📊 Vollständiger CSV Export
+                                </button>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="card">
+
+                    <div class="card card--danger">
                         <div class="card__header">
-                            <h3>Einstellungen</h3>
+                            <h3>⚠️ Einstellungen</h3>
                         </div>
                         <div class="card__body">
                             <p>Vorsicht: Diese Aktion kann nicht rückgängig gemacht werden!</p>
-                            <button id="clearAllDataBtn" class="btn btn--outline" style="color: var(--color-error);">Alle Daten löschen</button>
+                            <button class="btn btn--danger" id="clearAllData">
+                                🗑️ Alle Daten löschen
+                            </button>
                         </div>
                     </div>
                 </div>
-                
-                <button id="backToOverviewBtn" class="btn btn--outline btn--full-width">Zurück zur Übersicht</button>
-            </div>
-        </div>
-        
-        <!-- Manual Game Input Modal -->
-        <div id="manualGameModal" class="modal hidden">
-            <div class="modal-content">
-                <h2>Spiel manuell eingeben</h2>
-                <div class="form-group">
-                    <label class="form-label">Unser Team:</label>
-                    <input type="text" id="manualOurTeam" class="form-control" placeholder="Name unseres Teams">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Gegner:</label>
-                    <input type="text" id="manualOpponent" class="form-control" placeholder="Gegnerteam">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Datum:</label>
-                    <input type="date" id="manualDate" class="form-control">
-                </div>
-                <div class="modal-actions">
-                    <button id="saveManualGameBtn" class="btn btn--primary">Spiel erstellen</button>
-                    <button id="cancelManualGameBtn" class="btn btn--outline">Abbrechen</button>
+
+                <div class="screen-actions">
+                    <button class="btn btn--outline" id="backToOverview">
+                        ← Zurück zur Übersicht
+                    </button>
                 </div>
             </div>
         </div>
-        
-        <!-- Confirmation Modal -->
-        <div id="confirmationModal" class="modal hidden">
+
+        <!-- Manual Game Entry Screen -->
+        <div id="manualGameScreen" class="screen">
+            <div class="container">
+                <header class="screen-header">
+                    <h2>Spiel manuell eingeben</h2>
+                </header>
+
+                <div class="card">
+                    <div class="card__body">
+                        <div class="form-group">
+                            <label for="manualOurTeam" class="form-label">Unser Team:</label>
+                            <input type="text" id="manualOurTeam" class="form-control" 
+                                   placeholder="z.B. TSV Mannheim">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="manualOpponent" class="form-label">Gegner:</label>
+                            <input type="text" id="manualOpponent" class="form-control" 
+                                   placeholder="z.B. TV Brühl">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="manualDate" class="form-label">Datum:</label>
+                            <input type="date" id="manualDate" class="form-control">
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn--outline" id="cancelManualGame">
+                                ← Abbrechen
+                            </button>
+                            <button class="btn btn--primary" id="saveManualGame">
+                                ✅ Spiel erstellen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Dialog -->
+        <div id="confirmationDialog" class="modal">
             <div class="modal-content">
-                <h2 id="confirmTitle">Bestätigung</h2>
-                <p id="confirmMessage">Sind Sie sicher?</p>
-                <div class="modal-actions">
-                    <button id="confirmYes" class="btn btn--primary">Ja</button>
-                    <button id="confirmNo" class="btn btn--outline">Nein</button>
+                <header class="modal-header">
+                    <h3>Bestätigung</h3>
+                </header>
+                <div class="modal-body">
+                    <p id="confirmationMessage">Sind Sie sicher?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--outline" id="cancelConfirmation">
+                        Abbrechen
+                    </button>
+                    <button class="btn btn--danger" id="confirmAction">
+                        ✅ Bestätigen
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script src="app.js"></script>
+
+    <!-- Scripts -->
+    <script src="/mini-basketball-scouting/app.js"></script>
+
+    <!-- Service Worker Registration -->
     <script>
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
-           window.addEventListener('load', function() {
-               navigator.serviceWorker.register('/mini-basketball-scouting/sw.js')
-                   .then(function(registration) {
-                       console.log('SW registered:', registration.scope);
-                   })
-                   .catch(function(error) {
-                       console.log('SW registration failed:', error);
-                   });
-           });
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/mini-basketball-scouting/sw.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker registered successfully:', registration.scope);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', function() {
+                            const newWorker = registration.installing;
+                            console.log('🔄 New service worker found, installing...');
+
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        // New update available
+                                        showUpdateBanner();
+                                    } else {
+                                        console.log('✅ App is cached for offline use');
+                                        showInstallPrompt();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(function(error) {
+                        console.error('❌ Service Worker registration failed:', error);
+                    });
+            });
         }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        let installButton;
+
+        // Create install button
+        function createInstallButton() {
+            if (!installButton) {
+                installButton = document.createElement('button');
+                installButton.className = 'pwa-install-button';
+                installButton.innerHTML = '📱 App installieren';
+
+                installButton.addEventListener('click', async function() {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const result = await deferredPrompt.userChoice;
+                        console.log('Install prompt result:', result.outcome);
+                        deferredPrompt = null;
+                        installButton.style.display = 'none';
+                    }
+                });
+
+                document.body.appendChild(installButton);
+            }
+        }
+
+        // Show install prompt
+        function showInstallPrompt() {
+            if (!localStorage.getItem('pwa-install-dismissed')) {
+                createInstallButton();
+                if (installButton) {
+                    installButton.style.display = 'block';
+                }
+            }
+        }
+
+        // Before install prompt
+        window.addEventListener('beforeinstallprompt', function(e) {
+            console.log('💾 PWA Install prompt triggered');
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallPrompt();
+        });
+
+        // App installed successfully
+        window.addEventListener('appinstalled', function(evt) {
+            console.log('🎉 PWA installed successfully');
+            if (installButton) {
+                installButton.style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
+
+        // Update banner functions
+        function showUpdateBanner() {
+            const banner = document.getElementById('updateBanner');
+            const updateButton = document.getElementById('updateButton');
+
+            if (banner) {
+                banner.classList.add('show');
+
+                updateButton.addEventListener('click', function() {
+                    window.location.reload();
+                });
+            }
+        }
+
+        // Online/Offline Status
+        function updateOnlineStatus() {
+            const body = document.body;
+            if (navigator.onLine) {
+                console.log('🌐 App is online');
+                body.classList.remove('offline');
+            } else {
+                console.log('📴 App is offline');
+                body.classList.add('offline');
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        document.addEventListener('DOMContentLoaded', updateOnlineStatus);
+
+        // Prevent zoom on iOS
+        document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+        });
+
+        // Performance monitoring
+        if ('performance' in window) {
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    if (perfData) {
+                        console.log('📊 Page Load Time:', Math.round(perfData.loadEventEnd - perfData.loadEventStart), 'ms');
+                    }
+                }, 0);
+            });
+        }
+
+        // Debug info (kann später entfernt werden)
+        console.log('🏀 Basketball Scouting App initialized');
+        console.log('📱 PWA features:', {
+            serviceWorker: 'serviceWorker' in navigator,
+            manifest: document.querySelector('link[rel="manifest"]') !== null,
+            offline: !navigator.onLine
+        });
     </script>
 </body>
 </html>
