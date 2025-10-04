@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://olieder.github.io/mini-basketball-scouting/sitemap.xml

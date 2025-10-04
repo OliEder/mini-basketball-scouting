@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Basketball Scouting App - U10 Bezirksliga</title>
     <link rel="stylesheet" href="style.css">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/mini-basketball-scouting/manifest.json">
+
+    <!-- Mobile Optimierung -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="B-Scout">
+
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#1f2937">
+    <meta name="msapplication-navbutton-color" content="#1f2937">
+
+    <!-- Icons fuer verschiedene Plattformen -->
+    <link rel="icon" type="image/png" href="/icon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/icon/favicon.svg" />
+    <link rel="shortcut icon" href="/icon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="B-Scout" />
+    <link rel="manifest" href="/icon/site.webmanifest" />
+    <!-- SEO -->
+    <meta name="description" content="Basketball Scouting App fuer U10 Minibasketball - Bewerte gegnerische Spieler offline">
+    <meta name="keywords" content="Basketball, Scouting, U10, Minibasketball, Offline, PWA">
 </head>
 <body>
     <!-- App Container -->
@@ -344,5 +368,18 @@
     </div>
     
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+           window.addEventListener('load', function() {
+               navigator.serviceWorker.register('/mini-basketball-scouting/sw.js')
+                   .then(function(registration) {
+                       console.log('SW registered:', registration.scope);
+                   })
+                   .catch(function(error) {
+                       console.log('SW registration failed:', error);
+                   });
+           });
+        }
+    </script>
 </body>
 </html>
