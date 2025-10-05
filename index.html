@@ -29,102 +29,11 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/mini-basketball-scouting/style.css">
-
-    <!-- PWA Styles -->
-    <style>
-        /* PWA Install Button */
-        .pwa-install-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            display: none;
-            transition: all 0.3s ease;
-        }
-
-        .pwa-install-button:hover {
-            background: #059669;
-            transform: translateY(-2px);
-        }
-
-        .pwa-install-button.show {
-            display: block;
-        }
-
-        /* Offline Indicator */
-        .offline::after {
-            content: "OFFLINE";
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: #f59e0b;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 1000;
-        }
-
-        /* Update Banner */
-        .update-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #2563eb;
-            color: white;
-            padding: 12px 16px;
-            text-align: center;
-            z-index: 1001;
-            display: none;
-        }
-
-        .update-banner.show {
-            display: block;
-        }
-
-        .update-button {
-            background: white;
-            color: #2563eb;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-
-        /* Loading indicator */
-        .loading {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        /* Safe areas for iOS */
-        @supports (padding-top: env(safe-area-inset-top)) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-left: env(safe-area-inset-left);
-                padding-right: env(safe-area-inset-right);
-                padding-bottom: env(safe-area-inset-bottom);
-            }
-        }
-    </style>
 </head>
 <body>
     <!-- Update Banner -->
     <div id="updateBanner" class="update-banner">
-        🔄 Neue Version verfügbar!
+        Neue Version verfuegbar!
         <button id="updateButton" class="update-button">Aktualisieren</button>
     </div>
 
@@ -134,19 +43,19 @@
         <div id="gameSelectionScreen" class="screen active">
             <div class="container">
                 <header class="app-header">
-                    <h1>🏀 Basketball Scouting</h1>
+                    <h1>Basketball Scouting</h1>
                     <p class="subtitle">U10 mixed Bezirksliga (Oberpfalz)</p>
                 </header>
 
                 <div class="card">
                     <div class="card__header">
-                        <h2>Spiel auswählen</h2>
+                        <h2>Spiel auswaehlen</h2>
                     </div>
                     <div class="card__body">
                         <div class="form-group">
-                            <label for="gameSelect" class="form-label">Kommendes Spiel auswählen:</label>
+                            <label for="gameSelect" class="form-label">Kommendes Spiel auswaehlen:</label>
                             <select id="gameSelect" class="form-control">
-                                <option value="">Spiel auswählen...</option>
+                                <option value="">Spiel auswaehlen...</option>
                             </select>
                         </div>
 
@@ -165,7 +74,7 @@
                         </div>
 
                         <div class="game-info" id="selectedGameInfo" style="display: none;">
-                            <h3>Ausgewähltes Spiel:</h3>
+                            <h3>Ausgewaehltes Spiel:</h3>
                             <div class="game-details">
                                 <p><strong>Datum & Zeit:</strong> <span id="gameDateTime"></span></p>
                                 <p><strong>Spielhalle:</strong> <span id="gameVenue"></span></p>
@@ -176,10 +85,10 @@
 
                         <div class="form-actions">
                             <button id="startScoutingBtn" class="btn btn--primary btn--large" disabled>
-                                🚀 Scouting starten
+                                Scouting starten
                             </button>
                             <button id="manualGameBtn" class="btn btn--outline">
-                                ✏️ Spiel manuell eingeben
+                                Spiel manuell eingeben
                             </button>
                         </div>
                     </div>
@@ -193,30 +102,30 @@
                 <nav class="breadcrumb">
                     <span class="breadcrumb-item">Spiel</span>
                     <span class="breadcrumb-separator">></span>
-                    <span class="breadcrumb-item active">Spieler-Übersicht</span>
+                    <span class="breadcrumb-item active">Spieler-Uebersicht</span>
                 </nav>
 
                 <header class="screen-header">
-                    <h2>Bewertete Spieler</h2>
+                    <h2 id="playerRatingTitle">Bewertete Spieler</h2>
                     <button class="btn btn--primary" id="addPlayerBtn">
-                        ➕ Spieler hinzufügen
+                        Spieler hinzufuegen
                     </button>
                 </header>
 
                 <div id="playersList" class="players-list">
                     <div class="empty-state">
-                        <div class="empty-icon">🏀</div>
+                        <div class="empty-icon">Basketball</div>
                         <h3>Noch keine Spieler bewertet</h3>
-                        <p>Fügen Sie den ersten Spieler hinzu, um mit dem Scouting zu beginnen</p>
+                        <p>Fuegen Sie den ersten Spieler hinzu, um mit dem Scouting zu beginnen</p>
                     </div>
                 </div>
 
                 <div class="screen-actions">
                     <button class="btn btn--outline" id="backToGameSelection">
-                        ← Spiel wechseln
+                        Spiel wechseln
                     </button>
                     <button class="btn btn--secondary" id="exportDataBtn">
-                        📊 Export
+                        Export
                     </button>
                 </div>
             </div>
@@ -226,7 +135,7 @@
         <div id="playerRatingScreen" class="screen">
             <div class="container">
                 <nav class="breadcrumb">
-                    <span class="breadcrumb-item">Übersicht</span>
+                    <span class="breadcrumb-item">Uebersicht</span>
                     <span class="breadcrumb-separator">></span>
                     <span class="breadcrumb-item active">Spieler bewerten</span>
                 </nav>
@@ -250,10 +159,10 @@
 
                         <div class="form-actions">
                             <button class="btn btn--outline" id="cancelRating">
-                                ← Abbrechen
+                                Abbrechen
                             </button>
                             <button class="btn btn--primary btn--large" id="savePlayerRating">
-                                💾 Spieler speichern
+                                Spieler speichern
                             </button>
                         </div>
                     </div>
@@ -265,7 +174,7 @@
         <div id="exportScreen" class="screen">
             <div class="container">
                 <nav class="breadcrumb">
-                    <span class="breadcrumb-item">Übersicht</span>
+                    <span class="breadcrumb-item">Uebersicht</span>
                     <span class="breadcrumb-separator">></span>
                     <span class="breadcrumb-item active">Export</span>
                 </nav>
@@ -283,10 +192,10 @@
                             <p>Export der aktuellen Scouting-Daten</p>
                             <div class="button-group">
                                 <button class="btn btn--secondary" id="exportCurrentJSON">
-                                    📄 JSON Export
+                                    JSON Export
                                 </button>
                                 <button class="btn btn--secondary" id="exportCurrentCSV">
-                                    📊 CSV Export
+                                    CSV Export
                                 </button>
                             </div>
                         </div>
@@ -300,10 +209,10 @@
                             <p>Export aller gespeicherten Scouting-Daten</p>
                             <div class="button-group">
                                 <button class="btn btn--secondary" id="exportAllJSON">
-                                    📄 Vollständiger JSON Export
+                                    Vollstaendiger JSON Export
                                 </button>
                                 <button class="btn btn--secondary" id="exportAllCSV">
-                                    📊 Vollständiger CSV Export
+                                    Vollstaendiger CSV Export
                                 </button>
                             </div>
                         </div>
@@ -311,12 +220,12 @@
 
                     <div class="card card--danger">
                         <div class="card__header">
-                            <h3>⚠️ Einstellungen</h3>
+                            <h3>Einstellungen</h3>
                         </div>
                         <div class="card__body">
-                            <p>Vorsicht: Diese Aktion kann nicht rückgängig gemacht werden!</p>
+                            <p>Vorsicht: Diese Aktion kann nicht rueckgaengig gemacht werden!</p>
                             <button class="btn btn--danger" id="clearAllData">
-                                🗑️ Alle Daten löschen
+                                Alle Daten loeschen
                             </button>
                         </div>
                     </div>
@@ -324,7 +233,7 @@
 
                 <div class="screen-actions">
                     <button class="btn btn--outline" id="backToOverview">
-                        ← Zurück zur Übersicht
+                        Zurueck zur Uebersicht
                     </button>
                 </div>
             </div>
@@ -348,7 +257,7 @@
                         <div class="form-group">
                             <label for="manualOpponent" class="form-label">Gegner:</label>
                             <input type="text" id="manualOpponent" class="form-control" 
-                                   placeholder="z.B. TV Brühl">
+                                   placeholder="z.B. TV Bruehl">
                         </div>
 
                         <div class="form-group">
@@ -358,10 +267,10 @@
 
                         <div class="form-actions">
                             <button class="btn btn--outline" id="cancelManualGame">
-                                ← Abbrechen
+                                Abbrechen
                             </button>
                             <button class="btn btn--primary" id="saveManualGame">
-                                ✅ Spiel erstellen
+                                Spiel erstellen
                             </button>
                         </div>
                     </div>
@@ -373,7 +282,7 @@
         <div id="confirmationDialog" class="modal">
             <div class="modal-content">
                 <header class="modal-header">
-                    <h3>Bestätigung</h3>
+                    <h3>Bestaetigung</h3>
                 </header>
                 <div class="modal-body">
                     <p id="confirmationMessage">Sind Sie sicher?</p>
@@ -383,7 +292,7 @@
                         Abbrechen
                     </button>
                     <button class="btn btn--danger" id="confirmAction">
-                        ✅ Bestätigen
+                        Bestaetigen
                     </button>
                 </div>
             </div>
@@ -400,12 +309,12 @@
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/mini-basketball-scouting/sw.js')
                     .then(function(registration) {
-                        console.log('✅ Service Worker registered successfully:', registration.scope);
+                        console.log('Service Worker registered successfully:', registration.scope);
 
                         // Check for updates
                         registration.addEventListener('updatefound', function() {
                             const newWorker = registration.installing;
-                            console.log('🔄 New service worker found, installing...');
+                            console.log('New service worker found, installing...');
 
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed') {
@@ -413,7 +322,7 @@
                                         // New update available
                                         showUpdateBanner();
                                     } else {
-                                        console.log('✅ App is cached for offline use');
+                                        console.log('App is cached for offline use');
                                         showInstallPrompt();
                                     }
                                 }
@@ -421,7 +330,7 @@
                         });
                     })
                     .catch(function(error) {
-                        console.error('❌ Service Worker registration failed:', error);
+                        console.error('Service Worker registration failed:', error);
                     });
             });
         }
@@ -435,7 +344,7 @@
             if (!installButton) {
                 installButton = document.createElement('button');
                 installButton.className = 'pwa-install-button';
-                installButton.innerHTML = '📱 App installieren';
+                installButton.innerHTML = 'App installieren';
 
                 installButton.addEventListener('click', async function() {
                     if (deferredPrompt) {
@@ -463,7 +372,7 @@
 
         // Before install prompt
         window.addEventListener('beforeinstallprompt', function(e) {
-            console.log('💾 PWA Install prompt triggered');
+            console.log('PWA Install prompt triggered');
             e.preventDefault();
             deferredPrompt = e;
             showInstallPrompt();
@@ -471,7 +380,7 @@
 
         // App installed successfully
         window.addEventListener('appinstalled', function(evt) {
-            console.log('🎉 PWA installed successfully');
+            console.log('PWA installed successfully');
             if (installButton) {
                 installButton.style.display = 'none';
             }
@@ -496,10 +405,10 @@
         function updateOnlineStatus() {
             const body = document.body;
             if (navigator.onLine) {
-                console.log('🌐 App is online');
+                console.log('App is online');
                 body.classList.remove('offline');
             } else {
-                console.log('📴 App is offline');
+                console.log('App is offline');
                 body.classList.add('offline');
             }
         }
@@ -519,15 +428,15 @@
                 setTimeout(function() {
                     const perfData = performance.getEntriesByType('navigation')[0];
                     if (perfData) {
-                        console.log('📊 Page Load Time:', Math.round(perfData.loadEventEnd - perfData.loadEventStart), 'ms');
+                        console.log('Page Load Time:', Math.round(perfData.loadEventEnd - perfData.loadEventStart), 'ms');
                     }
                 }, 0);
             });
         }
 
-        // Debug info (kann später entfernt werden)
-        console.log('🏀 Basketball Scouting App initialized');
-        console.log('📱 PWA features:', {
+        // Debug info
+        console.log('Basketball Scouting App initialized');
+        console.log('PWA features:', {
             serviceWorker: 'serviceWorker' in navigator,
             manifest: document.querySelector('link[rel="manifest"]') !== null,
             offline: !navigator.onLine
